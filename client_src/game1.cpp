@@ -78,6 +78,17 @@ void Game::processDataFromServer(sf::Packet& packet) {
         enemy_.SetPoints(points2);
     }
 
+
+    int shells_size;
+    packet >> shells_size;
+
+    //shells_
+    
+
+
+
+
+
     in_packet_.clear();
 }
 
