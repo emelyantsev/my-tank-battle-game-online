@@ -21,7 +21,7 @@ class Game {
         RUNNING,
         WAITING,
         DISPLAY_RESULT,
-      //  DISPLAY_HELP,
+    //  DISPLAY_HELP,
     };
 
     enum class Result {

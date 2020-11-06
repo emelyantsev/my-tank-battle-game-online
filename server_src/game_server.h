@@ -3,6 +3,7 @@
 #include <SFML/Network.hpp>
 
 #include <memory>
+#include <mutex>
 #include <vector>
 #include <list>
 
@@ -31,6 +32,13 @@ class GameServer {
         sf::TcpListener listener_;
 
         std::vector<Client> clients_;
+
+        void handleNewClient1(std::shared_ptr<sf::TcpSocket> p_tcp_socket);
+        void handleGameSession1(std::unique_ptr<Client> client0, std::unique_ptr<Client> client1 ); 
+
+
+        std::unique_ptr<Client> p_waiting_client_ = nullptr;
+        std::mutex mtx_;
 
 };
 

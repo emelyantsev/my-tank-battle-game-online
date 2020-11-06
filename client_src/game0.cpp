@@ -114,14 +114,26 @@ void Game::handleInput() {
             }
 
 
+            case State::WAITING: {                
+
+                if (event.type == sf::Event::KeyPressed) {
+
+                    if (event.key.code == sf::Keyboard::Escape) {
+                         
+                         StopGameSession();
+                    }
+                }
+                break;
+            }
+
+
 
             case State::RUNNING: {                
 
                 if (event.type == sf::Event::KeyPressed) {
 
                     if (event.key.code == sf::Keyboard::Escape) {
-                         //   state_ = State::PAUSED ;
-                         //   clock1_.restart();
+                         
                          StopGameSession();
                     }
 

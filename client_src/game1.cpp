@@ -5,6 +5,8 @@
 #include "../common_src/network_game.h"
 #include "../common_src/protocol.h"
 
+#include "../common_src/utils.h"
+
 void Game::InitNewGame() {
 
 
@@ -26,10 +28,10 @@ void Game::InitNewGame() {
 
 
     sf::TcpSocket::Status  status = socket_.connect("127.0.0.1", 45000);
-    std::cout << status << std::endl;
+    std::cout << "Connect status :" << status << std::endl;
 
     status = socket_.receive(in_packet_);
-    std::cout << status << std::endl;
+    std::cout << "Receive status:" << status << std::endl;
 
     in_packet_ >> id_;
 
@@ -148,4 +150,6 @@ void Game::StopGameSession() {
 
     socket_.disconnect() ;
     state_ = State::MENU ;
+
+    socket_.setBlocking(true);
 }
