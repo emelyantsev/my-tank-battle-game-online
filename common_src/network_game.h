@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../common_src/tank.h"
-#include "../common_src/shell.h"
+#include "tank.h"
+#include "shell.h"
 
 #include <list>
 

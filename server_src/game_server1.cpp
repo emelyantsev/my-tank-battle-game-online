@@ -67,7 +67,7 @@ void GameServer::handleNewClient(std::shared_ptr<sf::TcpSocket> p_tcp_socket) {
 
         std::cout << "Send id " << 1 << " status = " << status << std::endl;
 
-        std::thread(&GameServer::handleGameSession1, this).detach();
+        std::thread(&GameServer::handleGameSession, this).detach();
     }
     else {
 

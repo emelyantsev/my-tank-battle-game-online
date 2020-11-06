@@ -8,6 +8,8 @@
 
 #include "client.h"
 #include "../common_src/tank.h"
+#include "../common_src/network_game.h"
+
 
 class GameServer {
 
@@ -22,9 +24,9 @@ class GameServer {
     private:
 
         void handleNewClient(std::shared_ptr<sf::TcpSocket> p_tcp_socket);    
-        //void handleGameSession();
-        void handleGameSession1();
-        void handleMessageFromClient(sf::Packet packet_, Tank& ref_tank, ShellsList& shells_list);
+        void handleGameSession();
+        void handleMessageFromClient(sf::Packet& packet_, Tank& ref_tank, ShellsList& shells_list);
+        void prepareMessageForClients(sf::Packet& packet_, NetworkGame& game); 
 
         sf::TcpListener listener_;
 

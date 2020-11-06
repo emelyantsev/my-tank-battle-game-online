@@ -13,8 +13,11 @@ void NetworkGame::InitNewGame() {
 
     std::srand(std::time(nullptr));
 
-    tank0 = Tank(  sf::Vector2f{ static_cast<float>(20. + std::rand() % 150),  static_cast<float>(40. + std::rand() % 300 ) } ),    
-    tank1 = Tank(  sf::Vector2f{ static_cast<float>(320. + std::rand() % 150),  static_cast<float>(40. + std::rand() % 300 ) } ) ;
+    tank0 = Tank(  sf::Vector2f{ static_cast<float>(20. + std::rand() % 150),  static_cast<float>(40. + std::rand() % 300 ) }, 
+        sf::Color::Black, sf::Color::Black, sf::Color::Black, this
+     );    
+    tank1 = Tank(  sf::Vector2f{ static_cast<float>(320. + std::rand() % 150),  static_cast<float>(40. + std::rand() % 300 ) },
+        sf::Color::Black, sf::Color::Black, sf::Color::Black, this ) ;
 
     tank1.Rotate(180);
 

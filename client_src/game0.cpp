@@ -1,4 +1,5 @@
 #include "game.h"
+#include <iostream>
 
 Game::Game() : window_(sf::VideoMode(640, 360), "Tanks Online", sf::Style::Titlebar | sf::Style::Close ) {
 
@@ -18,6 +19,11 @@ Game::Game() : window_(sf::VideoMode(640, 360), "Tanks Online", sf::Style::Title
     }
 
     PrepareMenu();
+    PrepareStatus();
+
+    terrain_.setFillColor(sf::Color(10, 10, 10));
+    terrain_.setPosition(20, 40);
+    terrain_.setSize({600, 300});
 
 }
 
@@ -25,10 +31,12 @@ Game::Game() : window_(sf::VideoMode(640, 360), "Tanks Online", sf::Style::Title
 void Game::run() {
 
 
+
     while (window_.isOpen() ) {
 
-        handleInput();
-        update();
+        
+        handleInput();        
+        update();        
         render();
     }
 
@@ -66,7 +74,7 @@ void Game::handleInput() {
                     else if (event.key.code == sf::Keyboard::Return) {
 
                         InitNewGame();
-                        state_ = State::RUNNING;
+                    
                     }
                     else if (event.key.code == sf::Keyboard::F11) {
 
@@ -201,14 +209,43 @@ void Game::handleInput() {
 
 void Game::update() {
 
-    out_packet_ << int(Command::FINAL) ;
 
-    socket_.send(out_packet_);
-    out_packet_.clear();
+    if (state_ == State::MENU) {
+        
+        return ;
+    }
+
+    else if (state_ == State::WAITING) {
 
 
-    socket_.receive(in_packet_);
-    processDataFromServer(in_packet_);
+        sf::TcpSocket::Status status = socket_.receive(in_packet_);
+
+        std::cout << "Waiting socket status " << status << std::endl;
+
+        if (status == sf::TcpSocket::Status::Done) {
+
+            processDataFromServer(in_packet_);
+            socket_.setBlocking(true);
+            state_ = State::RUNNING;
+
+        }
+
+    }
+
+    else if (state_ == State::RUNNING) {
+
+        out_packet_ << int(Command::FINAL) ;
+
+        socket_.send(out_packet_);
+        out_packet_.clear();
+
+
+        socket_.receive(in_packet_);
+        processDataFromServer(in_packet_);
+
+        UpdateStatus();
+
+    }
 
 }
 
@@ -220,13 +257,34 @@ void Game::render() {
 
     if (state_ == State::MENU) {
         
+        
         RenderMenu();
+        
     }
 
     else if (state_ == State::RUNNING) {
 
+
+        window_.draw(terrain_);
+
+        
+        for (const auto& shell : shells_) {
+            shell.Render(window_);
+        }
+
+
+        for (const auto& shell : enemy_shells_) {
+            shell.Render(window_);
+        }
+        
+
+
         enemy_.Render(window_);
         tank_.Render(window_);
+
+        window_.draw(status_text_0);
+        window_.draw(status_text_1);
+        window_.draw(time_str_);
 
     }
 

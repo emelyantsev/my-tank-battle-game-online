@@ -19,6 +19,9 @@ class Game {
         
         MENU,
         RUNNING,
+        WAITING,
+      //  DISPLAY_RESULT,
+      //  DISPLAY_HELP,
     };
 
 
@@ -45,13 +48,14 @@ class Game {
 
         State state_ = State::MENU;
 
-
+        float game_time_seconds = 0;
+        
         Tank tank_;
         Tank enemy_;
 
 
         std::vector<Shell> shells_;
-        std::vector<Shell> enemy_shells;
+        std::vector<Shell> enemy_shells_;
 
 
 
@@ -96,5 +100,22 @@ class Game {
         bool is_full_screen = false;
         sf::View view_;
         sf::Vector2i window_position_;
+
+
+        // Status
+
+        sf::Text status_text_0;
+        sf::Text status_text_1;
+
+        sf::Text time_str_;
+
+        void PrepareStatus();
+        void UpdateStatus() ;
+
+
+        // Terrain
+
+        sf::RectangleShape terrain_;
+
 
 };

@@ -1,107 +1,108 @@
+#include "game_server.h"
 
 #include "game_server.h"
-#include "../common_src/tank.h"
+#include "../common_src/network_game.h"
+
 #include "../common_src/utils.h"
-#include "../common_src/protocol.h"
+
 #include <iostream>
 
-// void GameServer::handleGameSession() {
+void GameServer::handleGameSession() {
 
-//     Client& client1 = clients_[clients_.size() - 2 ];
-//     Client& client2 = clients_[clients_.size() - 1 ];
 
-//     sf::TcpSocket::Status status1;
-//     sf::TcpSocket::Status status2;
-    
-//     Tank tank1( {100, 200});    
-//     Tank tank2( {400, 200});
+    Client& client0 = clients_[clients_.size() - 2 ];
+    Client& client1 = clients_[clients_.size() - 1 ];
 
+    sf::TcpSocket::Status status0;
+    sf::TcpSocket::Status status1;
 
     
-
-//     sf::Packet message1;
-//     message1 << 1 << tank1.GetPosition().x << tank1.GetPosition().y << tank1.GetRotation() << tank1.GetPoints();
-//     message1 << tank2.GetPosition().x << tank2.GetPosition().y << tank2.GetRotation() << tank2.GetPoints();
+    NetworkGame game;
 
 
-//     sf::Packet message2;
-//     message2 << 2 << tank1.GetPosition().x << tank1.GetPosition().y << tank1.GetRotation() << tank1.GetPoints();
-//     message2 << tank2.GetPosition().x << tank2.GetPosition().y << tank2.GetRotation() << tank2.GetPoints();
+    sf::Packet out_message;
+
+    
+    prepareMessageForClients(out_message, game);
 
 
-//     status1 = client1.p_socket_->send(message1);
-//     std::cout << "Client 1 send status " << status1 << std::endl;
+    status0 = client0.p_socket_->send(out_message);
+    std::cout << "Client 0 send status " << status0 << std::endl;
+
+    status1 = client1.p_socket_->send(out_message);
+    std::cout << "Client 1 send status " << status1 << std::endl;
 
 
-//     status2 = client2.p_socket_->send(message2);
-//     std::cout << "Client 2 send status " << status2 << std::endl;
+
+    sf::Packet in_message0;
+    sf::Packet in_message1;
 
 
-//     sf::Clock clock;
+    while (true) {
 
 
-//     while (true) {
+        in_message0.clear();
+        in_message1.clear();
 
 
-//         message1.clear();
-//         message2.clear();
-
-
-//         if (status1 == sf::TcpSocket::Status::Done) {
+        if (status0 == sf::TcpSocket::Status::Done) {
         
-//             status1 = client1.p_socket_->receive(message1);
-//             std::cout << "Client 1 receive status " << status1 << std::endl;
+            status0 = client0.p_socket_->receive(in_message0);
 
-//             if (status1 == sf::TcpSocket::Status::Done) {
-//                 handleMessageFromClient(message1, tank1);
-//             }
-//         }
+            std::cout << "Client 0 receive status " << status0 << std::endl;
 
+            if (status0 == sf::TcpSocket::Status::Done) {
 
-//         if (status2 == sf::TcpSocket::Status::Done) {
-
-//             status2 = client2.p_socket_->receive(message2);
-//             std::cout << "Client 2 receive status " << status2 << std::endl;
-
-//             if (status2 == sf::TcpSocket::Status::Done) {
-//                 handleMessageFromClient(message2, tank2);
-//             }
-//         }
+                handleMessageFromClient(in_message0, game.tank0, game.tank_shells_0);
+            }
+        }
 
 
-//         float time_diff = clock.restart().asSeconds();
+        if (status1 == sf::TcpSocket::Status::Done) {
 
-//         tank1.Update(time_diff);
-//         tank2.Update(time_diff);
+            status1 = client1.p_socket_->receive(in_message1);
+            std::cout << "Client 1 receive status " << status1 << std::endl;
 
-
-//         sf::Packet message;
-
-//         message << tank1.GetPosition().x << tank1.GetPosition().y << tank1.GetRotation() << tank1.GetPoints();
-//         message << tank2.GetPosition().x << tank2.GetPosition().y << tank2.GetRotation() << tank2.GetPoints();
-
-
-//          if (status1 == sf::TcpSocket::Status::Done) {
-
-//             status1 = client1.p_socket_->send(message);
-//             std::cout << "Client 1 send status " << status1 << std::endl;
-//          }
+            if (status1 == sf::TcpSocket::Status::Done) {
+                handleMessageFromClient(in_message1, game.tank1, game.tank_shells_1);
+            }
+        }
 
 
-//         if (status2 == sf::TcpSocket::Status::Done) {
+        game.Update();
+
+        out_message.clear();
+
+        prepareMessageForClients(out_message, game);
+
+
+        if (status0 == sf::TcpSocket::Status::Done) {
+
+            status0 = client0.p_socket_->send(out_message);
+            std::cout << "Client 0 send status " << status0 << std::endl;
+        }
+
+
+        if (status1 == sf::TcpSocket::Status::Done) {
             
-//             status2 = client2.p_socket_->send(message);
-//             std::cout << "Client 2 send status " << status2 << std::endl;
-//         }
+            status1 = client1.p_socket_->send(out_message);
+            std::cout << "Client 1 send status " << status1 << std::endl;
+        }
 
 
-//         if (status1 != sf::TcpSocket::Status::Done && status2 != sf::TcpSocket::Status::Done) {
-//             break;
-//         }
-//     }
+        if (status0 != sf::TcpSocket::Status::Done && status1 != sf::TcpSocket::Status::Done) {
+            break;
+        }
+    }
 
-//     std::cout << "Ending game session" << std::endl;
+    std::cout << "Ending game session" << std::endl;
 
-// };
+}
+
+
+
+
+
+
 
 

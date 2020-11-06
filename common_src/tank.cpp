@@ -7,9 +7,9 @@
 #include <iostream>
 
 
+#include "network_game.h"
 
-
-Tank::Tank(sf::Vector2f position, sf::Color color, sf::Color color1, sf::Color color2)  {
+Tank::Tank(sf::Vector2f position, sf::Color color, sf::Color color1, sf::Color color2, NetworkGame * p_game) : p_game_(p_game) {
 
     corpus_.setSize( {20,10} );
     corpus_.setOrigin( {10,5} );

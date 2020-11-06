@@ -4,6 +4,8 @@
 
 #include "shell.h"
 
+class NetworkGame;
+
 class Tank {
 
     public:
@@ -11,9 +13,10 @@ class Tank {
         Tank() = default;
 
         Tank(sf::Vector2f position, 
-            sf::Color color = sf::Color::Red, 
-            sf::Color color1 = sf::Color::Red, 
-            sf::Color color2 = sf::Color::Red) ;
+            sf::Color color, 
+            sf::Color color1, 
+            sf::Color color2,
+            NetworkGame * p_game) ;
         
         void Render(sf::RenderWindow& l_window);        
         void Update(float time_diff);
@@ -53,6 +56,8 @@ class Tank {
         int points_ = 0;
 
         sf::Clock shooting_timer_;
+
+        NetworkGame * p_game_;
 };
 
 
