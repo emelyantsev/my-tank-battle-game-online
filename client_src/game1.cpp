@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "../common_src/network_game.h"
+#include "../common_src/protocol.h"
 
 void Game::InitNewGame() {
 
@@ -57,6 +58,9 @@ void Game::processDataFromServer(sf::Packet& packet) {
     std::vector<Shell>& ref_shells1 = id_ == 0 ? enemy_shells_ : shells_ ;
 
 
+    int command;
+    packet >> command;
+    
 
     sf::Vector2f pos0;
     float angle0;
@@ -124,6 +128,19 @@ void Game::processDataFromServer(sf::Packet& packet) {
 
 
     in_packet_.clear();
+
+
+
+    if (command == int(ServerCommand::STOP)) {
+
+        state_ = State::DISPLAY_RESULT;
+
+        PrepareResult();
+
+        socket_.disconnect();
+    }
+
+    
 }
 
 

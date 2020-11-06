@@ -38,7 +38,7 @@ void GameServer::handleGameSession() {
     sf::Packet in_message1;
 
 
-    while (true) {
+    while (!game.stopped) {
 
 
         in_message0.clear();

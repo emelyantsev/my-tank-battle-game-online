@@ -62,6 +62,13 @@ void GameServer::handleMessageFromClient(sf::Packet& packet_, Tank& ref_tank, Sh
 
 void GameServer::prepareMessageForClients(sf::Packet& packet, NetworkGame& game) {
 
+    if (!game.stopped) {
+        packet << int(ServerCommand::PLAY) ;
+    }
+    else {
+        packet << int(ServerCommand::STOP) ;
+    }
+
 
     packet << game.tank0.GetPosition().x << game.tank0.GetPosition().y << game.tank0.GetRotation() << game.tank0.GetPoints();
     packet << game.tank1.GetPosition().x << game.tank1.GetPosition().y << game.tank1.GetRotation() << game.tank1.GetPoints();

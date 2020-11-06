@@ -2,8 +2,11 @@
 
 #include "tank.h"
 #include "shell.h"
+#include "obstacle.h"
+#include "target.h"
 
 #include <list>
+#include <vector>
 
 struct NetworkGame {
 
@@ -16,6 +19,8 @@ struct NetworkGame {
 
     void checkShellsTanksCollisions();
 
+    sf::FloatRect getField();
+
 
     Tank tank0;
     Tank tank1;
@@ -26,5 +31,11 @@ struct NetworkGame {
     sf::Clock clock_;
 
     sf::Clock game_timer_;
+    float game_duration_ = 60.f;
+
+    std::vector<std::shared_ptr<Obstacle>> obstacles_;
+    std::list<std::shared_ptr<Target>> targets_ ;
+
+    bool stopped = false;
 
 };

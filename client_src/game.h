@@ -20,8 +20,15 @@ class Game {
         MENU,
         RUNNING,
         WAITING,
-      //  DISPLAY_RESULT,
+        DISPLAY_RESULT,
       //  DISPLAY_HELP,
+    };
+
+    enum class Result {
+
+        WIN,
+        LOST, 
+        DRAW
     };
 
 
@@ -44,7 +51,7 @@ class Game {
 
        
         sf::RenderWindow window_;      
-        //sf::Clock clock_;
+        sf::Clock clock_;
 
         State state_ = State::MENU;
 
@@ -117,5 +124,29 @@ class Game {
 
         sf::RectangleShape terrain_;
 
+
+        
+
+        // ---------------  Result ----------------- //
+
+        sf::Text result_text4_;
+        sf::Clock clock2_;
+        sf::RectangleShape result_terrain_;
+
+        void PrepareResult();
+        void RenderResult();
+
+
+        // ----------- Waiting -----------//
+
+        sf::Image image1_;
+        sf::Texture texture1_;
+        sf::Sprite sprite1_;
+        sf::Text waiting_text4_;
+
+        void PrepareWaiting();
+        void RenderWaiting();
+
+        
 
 };

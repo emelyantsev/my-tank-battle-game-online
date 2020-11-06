@@ -1,4 +1,5 @@
 #include "game.h"
+#include "../common_src/utils.h"
 #include <iostream>
 
 Game::Game() : window_(sf::VideoMode(640, 360), "Tanks Online", sf::Style::Titlebar | sf::Style::Close ) {
@@ -24,6 +25,8 @@ Game::Game() : window_(sf::VideoMode(640, 360), "Tanks Online", sf::Style::Title
     terrain_.setFillColor(sf::Color(10, 10, 10));
     terrain_.setPosition(20, 40);
     terrain_.setSize({600, 300});
+
+    PrepareWaiting();
 
 }
 
@@ -89,6 +92,28 @@ void Game::handleInput() {
 
                 break;
             } 
+
+
+            case State::DISPLAY_RESULT : {
+
+
+                if (event.type == sf::Event::KeyPressed) {
+
+                    if (event.key.code == sf::Keyboard::Escape) {
+                        
+                        state_ = State::MENU;
+                    }
+                    
+                    else if (event.key.code == sf::Keyboard::F11) {
+                        ToggleFullScreen();
+                    }
+                }
+
+                break;
+
+            }
+
+
 
             case State::RUNNING: {                
 
@@ -217,6 +242,8 @@ void Game::update() {
 
     else if (state_ == State::WAITING) {
 
+        sprite1_.rotate(-90*clock_.restart().asSeconds()) ;
+
 
         sf::TcpSocket::Status status = socket_.receive(in_packet_);
 
@@ -230,6 +257,15 @@ void Game::update() {
 
         }
 
+    }
+
+    else if (state_ == State::DISPLAY_RESULT) {
+
+        if (clock2_.getElapsedTime().asSeconds() > 5) {
+            state_ = State::MENU;
+        }
+
+        return ;
     }
 
     else if (state_ == State::RUNNING) {
@@ -257,12 +293,13 @@ void Game::render() {
 
     if (state_ == State::MENU) {
         
-        
-        RenderMenu();
-        
+        RenderMenu();     
+    }
+    else if (state_ == State::WAITING) {
+        RenderWaiting();
     }
 
-    else if (state_ == State::RUNNING) {
+    else if (state_ == State::RUNNING || state_ == State::DISPLAY_RESULT) {
 
 
         window_.draw(terrain_);
@@ -286,6 +323,11 @@ void Game::render() {
         window_.draw(status_text_1);
         window_.draw(time_str_);
 
+    }
+
+
+    if (state_ == State::DISPLAY_RESULT) {
+        RenderResult();
     }
 
     window_.display();

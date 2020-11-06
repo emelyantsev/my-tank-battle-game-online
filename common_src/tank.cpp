@@ -47,6 +47,22 @@ void Tank::Stop() {
 }
 
 void Tank::Rotate(float angle) {
+
+
+    sf::RectangleShape new_corpus(corpus_);
+    new_corpus.rotate(angle);
+
+
+    if (   &(p_game_->tank0) != this   && p_game_->tank0.GetBounds().intersects(new_corpus.getGlobalBounds() )       )    {
+        return;
+    }
+
+
+    if (   &(p_game_->tank1) != this   && p_game_->tank1.GetBounds().intersects(new_corpus.getGlobalBounds())       )    {
+        return;
+    }
+
+
     
     corpus_.rotate(angle);
     gun_.rotate(angle);
@@ -58,6 +74,37 @@ void Tank::Update(float time_diff) {
 
     float vx = cos (angle_ * M_PI/180) * speed_ * time_diff;
     float vy = sin (angle_ * M_PI/180) * speed_ * time_diff;
+
+    sf::Vector2f new_position = GetPosition() + sf::Vector2f(vx, vy);
+
+    if (!p_game_->getField().contains(new_position)) {
+
+        Stop();
+        return;
+    }
+
+
+
+    sf::FloatRect new_rect = GetBounds();
+    
+    new_rect.left += vx;
+    new_rect.top += vy;
+
+
+    if (   &(p_game_->tank0) != this   && p_game_->tank0.GetBounds().intersects(new_rect)       )    {
+        Stop();
+        return;
+    }
+
+
+    if (   &(p_game_->tank1) != this   && p_game_->tank1.GetBounds().intersects(new_rect)       )    {
+        Stop();
+        return;
+    }
+
+
+
+
 
     corpus_.move(vx, vy);
     tower_.move(vx, vy);

@@ -29,6 +29,12 @@ void NetworkGame::InitNewGame() {
 void NetworkGame::Update() {
 
 
+    if (game_timer_.getElapsedTime().asSeconds() >= game_duration_ ) {
+        stopped = true;
+        return;
+    }
+
+
     float time_diff = clock_.restart().asSeconds();
 
 
