@@ -1,4 +1,5 @@
 #include "tank.h"
+#include "utils.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -53,16 +54,21 @@ void Tank::Rotate(float angle) {
     new_corpus.rotate(angle);
 
 
-    if (   &(p_game_->tank0) != this   && p_game_->tank0.GetBounds().intersects(new_corpus.getGlobalBounds() )       )    {
+    if (   &(p_game_->tank0) != this   &&         
+           Collisions::IsRectangleShapesIntersecting(p_game_->tank0.corpus_ , new_corpus ) ) 
+    {
+
+        Stop();
         return;
     }
 
+    if (   &(p_game_->tank1) != this   &&         
+           Collisions::IsRectangleShapesIntersecting(p_game_->tank1.corpus_ , new_corpus ) ) 
+    {
 
-    if (   &(p_game_->tank1) != this   && p_game_->tank1.GetBounds().intersects(new_corpus.getGlobalBounds())       )    {
+        Stop();
         return;
     }
-
-
     
     corpus_.rotate(angle);
     gun_.rotate(angle);
@@ -84,26 +90,25 @@ void Tank::Update(float time_diff) {
     }
 
 
-
-    sf::FloatRect new_rect = GetBounds();
-    
-    new_rect.left += vx;
-    new_rect.top += vy;
+    sf::RectangleShape new_corpus(corpus_);
+    new_corpus.move(vx, vy);
 
 
-    if (   &(p_game_->tank0) != this   && p_game_->tank0.GetBounds().intersects(new_rect)       )    {
+    if (   &(p_game_->tank0) != this   &&         
+           Collisions::IsRectangleShapesIntersecting(p_game_->tank0.corpus_ , new_corpus ) ) 
+    {
+
         Stop();
         return;
     }
 
+    if (   &(p_game_->tank1) != this   &&         
+           Collisions::IsRectangleShapesIntersecting(p_game_->tank1.corpus_ , new_corpus ) ) 
+    {
 
-    if (   &(p_game_->tank1) != this   && p_game_->tank1.GetBounds().intersects(new_rect)       )    {
         Stop();
         return;
     }
-
-
-
 
 
     corpus_.move(vx, vy);
