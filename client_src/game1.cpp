@@ -2,40 +2,51 @@
 
 #include <iostream>
 
-#include "../common_src/network_game.h"
+
 #include "../common_src/protocol.h"
 
 #include "../common_src/utils.h"
 
-void Game::InitNewGame() {
 
 
-    tank_ = 
-    Tank( sf::Vector2f{100.f, 100.f},   
-                    sf::Color(150, 40, 40), 
-                    sf::Color(200, 20, 30), 
-                    sf::Color(200, 20, 30),
-                    nullptr
-            ) ;
-    
-    enemy_ = 
-    Tank( sf::Vector2f{200.f, 200.f}, 
-                    sf::Color(50, 50, 250), 
-                    sf::Color(0, 0, 250), 
-                    sf::Color(0, 0, 250),
-                    nullptr
-            ) ;
+void Game::ConnectToServer() {
 
 
     sf::TcpSocket::Status  status = socket_.connect("127.0.0.1", 45000);
+
     std::cout << "Connect status :" << status << std::endl;
 
-    status = socket_.receive(in_packet_);
+    if (status == sf::TcpSocket::Status::Done) {
+
+        connection_finished = true;
+        connection_ok = true;
+    }
+    else {
+
+        connection_finished = true;
+        connection_ok = false;
+
+    }
+
+    
+}
+
+
+
+void Game::InitNewGame() {
+
+
+
+
+
+    
+
+    sf::TcpSocket::Status status = socket_.receive(in_packet_);
     std::cout << "Receive status:" << status << std::endl;
 
     in_packet_ >> id_;
 
-    //std::cout << "id = " << id_ << std::endl;
+    std::cout << "id = " << id_ << std::endl;
 
     in_packet_.clear();
 
@@ -63,6 +74,21 @@ void Game::processDataFromServer(sf::Packet& packet) {
     int command;
     packet >> command;
     
+    if (command == int(ServerCommand::CHECK_WAITING) && state_ == State::WAITING) {
+
+        std::cout << "Check waiting command received" << std::endl;
+
+        sf::Packet response_packet;
+        response_packet << int(Command::FINAL) ;
+
+        socket_.setBlocking(true);
+
+        auto send_status = socket_.send(response_packet);
+
+        std::cout << "Send status = " << send_status << std::endl;
+
+        return;
+    }
 
     sf::Vector2f pos0;
     float angle0;
@@ -141,6 +167,11 @@ void Game::processDataFromServer(sf::Packet& packet) {
 
         socket_.disconnect();
     }
+    else if (command == int(ServerCommand::PLAY) && state_ == State::WAITING) {
+
+        socket_.setBlocking(true);
+        state_ = State::RUNNING;
+    }
 
     
 }
@@ -152,4 +183,6 @@ void Game::StopGameSession() {
     state_ = State::MENU ;
 
     socket_.setBlocking(true);
+
+    std::cout << "game session stopped" << std::endl;
 }

@@ -36,6 +36,8 @@ class GameServer {
         void handleNewClient1(std::shared_ptr<sf::TcpSocket> p_tcp_socket);
         void handleGameSession1(std::unique_ptr<Client> client0, std::unique_ptr<Client> client1 ); 
 
+        bool checkWaiting();
+
 
         std::unique_ptr<Client> p_waiting_client_ = nullptr;
         std::mutex mtx_;

@@ -11,7 +11,7 @@
 #include <memory>
 #include <vector>
 
-
+#include <atomic>
 
 class Game {
 
@@ -21,6 +21,8 @@ class Game {
         RUNNING,
         WAITING,
         DISPLAY_RESULT,
+        ESTABLISHING_CONNECTION,
+        CONNECTION_FAILED,
     //  DISPLAY_HELP,
     };
 
@@ -147,6 +149,21 @@ class Game {
         void PrepareWaiting();
         void RenderWaiting();
 
+
+        // ----------- Handle connection --- //
         
+        void ConnectToServer();
+
+        std::atomic<bool> connection_finished = false;
+        std::atomic<bool> connection_ok = false;
+
+        sf::Text connecting_text5_;
+        sf::Text connecting_failed_text5_;
+
+        sf::Clock connect_timer_;
+
+        void PrepareConnecting();
+        void RenderConnecting();
+        void RenderConnectingFailed();
 
 };

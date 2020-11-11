@@ -16,4 +16,5 @@ enum class ServerCommand {
     
     PLAY = 0,
     STOP = 1,
+    CHECK_WAITING = 2,
 };

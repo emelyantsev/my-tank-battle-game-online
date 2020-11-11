@@ -8,13 +8,13 @@ void Game::ToggleFullScreen() {
         window_position_ = window_.getPosition();
 
         is_full_screen = true;
-        window_.create( sf::VideoMode(1920, 1080), "Tanks", sf::Style::Fullscreen) ;
+        window_.create( sf::VideoMode(1920, 1080), "Tanks Online", sf::Style::Fullscreen) ;
 
     }
     else {
 
         is_full_screen = false;
-        window_.create( sf::VideoMode(640, 360), "Tanks", sf::Style::Titlebar | sf::Style::Close) ;
+        window_.create( sf::VideoMode(640, 360), "Tanks Online", sf::Style::Titlebar | sf::Style::Close) ;
         window_.setIcon(image0_.getSize().x, image0_.getSize().y, image0_.getPixelsPtr() );
         window_.setPosition(window_position_);
     }
@@ -81,7 +81,6 @@ void Game::PrepareResult() {
 void Game::RenderResult() {
 
     window_.draw(result_terrain_);
-
     window_.draw(result_text4_);
 }
 
@@ -118,3 +117,32 @@ void Game::RenderWaiting() {
     window_.draw(waiting_text4_) ;
 }
 
+void Game::PrepareConnecting() {
+
+    connecting_text5_.setFont(font_);
+    connecting_text5_.setString("Connecting to server") ;
+    connecting_text5_.setOrigin( connecting_text5_.getGlobalBounds().width / 2 , connecting_text5_.getGlobalBounds().height / 2) ;
+    connecting_text5_.setPosition( { 320, 280} ) ;
+    connecting_text5_.setColor(sf::Color(120, 120, 120)) ;
+
+
+    connecting_failed_text5_.setFont(font_);
+    connecting_failed_text5_.setString("Connection failed") ;
+    connecting_failed_text5_.setOrigin( connecting_failed_text5_.getGlobalBounds().width / 2 , connecting_failed_text5_.getGlobalBounds().height / 2) ;
+    connecting_failed_text5_.setPosition( { 320, 280} ) ;
+    connecting_failed_text5_.setColor(sf::Color(120, 120, 120)) ;
+
+}
+
+
+void Game::RenderConnecting() {
+
+    window_.draw(sprite1_);
+    window_.draw(connecting_text5_) ;
+}
+
+void Game::RenderConnectingFailed() {
+
+    window_.draw(sprite1_);
+    window_.draw(connecting_failed_text5_) ;
+}

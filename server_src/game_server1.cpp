@@ -8,6 +8,7 @@
 #include <thread>
 
 #include "../common_src/utils.h"
+#include "../common_src/protocol.h"
 
 GameServer::GameServer() {
 
@@ -90,7 +91,7 @@ void GameServer::handleNewClient1(std::shared_ptr<sf::TcpSocket> p_tcp_socket) {
 
     mtx_.lock();
 
-    if (p_waiting_client_ == nullptr) {
+    if (p_waiting_client_ == nullptr || !checkWaiting()  ) {
 
         p_waiting_client_ = std::unique_ptr<Client>(new Client(p_tcp_socket) );
 
@@ -130,5 +131,61 @@ void GameServer::handleNewClient1(std::shared_ptr<sf::TcpSocket> p_tcp_socket) {
     
 
 
+
+}
+
+
+
+bool GameServer::checkWaiting() {
+
+    sf::Packet packet;
+    sf::TcpSocket::Status status;
+
+    packet << int(ServerCommand::CHECK_WAITING);
+
+    status = p_waiting_client_->p_socket_->send(packet) ;
+
+    std::cout << "Waiting socket send status = " << status << std::endl;
+    
+    if (status != sf::TcpSocket::Status::Done) {
+
+        std::cout << "Check waiting send false" << std::endl;
+        return false;
+    }
+
+
+    packet.clear();
+
+    sf::Packet packet2;
+
+    status = p_waiting_client_->p_socket_->receive(packet2);
+
+    std::cout << "Waiting socket receive status = " << status << std::endl;
+
+    if (status != sf::TcpSocket::Status::Done) {
+
+        std::cout << "Check waiting receive false" << std::endl;
+        return false;
+    }
+
+    int command;
+
+    packet2 >> command;
+
+    if (command == int(Command::FINAL)) {
+
+        std::cout << "Check waiting true" << std::endl;
+        
+        return true;
+    } 
+    
+
+    std::cout << "command " << command << " size " << packet2.getDataSize() << std::endl;
+
+    std::cout << "Check waiting command false" << std::endl;
+    return false;
+    
+    
+    
 
 }

@@ -14,7 +14,7 @@ namespace Collisions {
 
     std::vector<sf::Vector2f> getPoints(const sf::RectangleShape shape) ;
 
-    bool IsRectangleShapesIntersecting(sf::RectangleShape& A, const sf::RectangleShape& B);
+    bool IsRectangleShapesIntersecting(const sf::RectangleShape& A, const sf::RectangleShape& B);
 
 
 }

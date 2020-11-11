@@ -69,7 +69,7 @@ std::vector<sf::Vector2f> Collisions::getPoints(const sf::RectangleShape shape) 
 
 
 
-bool Collisions::IsRectangleShapesIntersecting(sf::RectangleShape& A, const sf::RectangleShape& B) {
+bool Collisions::IsRectangleShapesIntersecting(const sf::RectangleShape& A, const sf::RectangleShape& B) {
 
     std::vector<sf::Vector2f> pointsA = getPoints(A) ;
     std::vector<sf::Vector2f> pointsB = getPoints(B) ;

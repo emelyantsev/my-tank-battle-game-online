@@ -1,6 +1,9 @@
 #include "game.h"
 #include "../common_src/utils.h"
 #include <iostream>
+#include "../common_src/network_game.h"
+
+#include <thread>
 
 Game::Game() : window_(sf::VideoMode(640, 360), "Tanks Online", sf::Style::Titlebar | sf::Style::Close ) {
 
@@ -27,6 +30,20 @@ Game::Game() : window_(sf::VideoMode(640, 360), "Tanks Online", sf::Style::Title
     terrain_.setSize({600, 300});
 
     PrepareWaiting();
+    PrepareConnecting();
+
+
+    tank_ = Tank( sf::Vector2f{100.f, 100.f},   
+                    sf::Color(150, 40, 40), 
+                    sf::Color(200, 20, 30), 
+                    sf::Color(200, 20, 30),
+                    nullptr ) ;
+    
+    enemy_ = Tank( sf::Vector2f{200.f, 200.f}, 
+                    sf::Color(50, 50, 250), 
+                    sf::Color(0, 0, 250), 
+                    sf::Color(0, 0, 250),
+                    nullptr ) ;
 
 }
 
@@ -76,8 +93,12 @@ void Game::handleInput() {
                     }
                     else if (event.key.code == sf::Keyboard::Return) {
 
-                        InitNewGame();
-                    
+                        //InitNewGame();
+
+                        connection_finished = false;
+                        state_ = State::ESTABLISHING_CONNECTION;
+                        std::thread(&Game::ConnectToServer, this).detach();
+
                     }
                     else if (event.key.code == sf::Keyboard::F11) {
 
@@ -105,6 +126,7 @@ void Game::handleInput() {
                     }
                     
                     else if (event.key.code == sf::Keyboard::F11) {
+
                         ToggleFullScreen();
                     }
                 }
@@ -121,6 +143,7 @@ void Game::handleInput() {
                     if (event.key.code == sf::Keyboard::Escape) {
                          
                          StopGameSession();
+
                     }
                 }
                 break;
@@ -252,24 +275,54 @@ void Game::update() {
         return ;
     }
 
+    else if (state_ == State::ESTABLISHING_CONNECTION)  {
+
+        sprite1_.rotate(-90*clock_.restart().asSeconds()) ;
+
+        if (!connection_finished) {
+
+            return;
+        }
+
+        if (connection_ok) {
+
+            InitNewGame();
+        }
+        else {
+
+            state_ = State::CONNECTION_FAILED;
+            connect_timer_.restart();
+        }
+
+
+    }
+
+    else if (state_ == State::CONNECTION_FAILED) {
+
+        sprite1_.rotate(-90*clock_.restart().asSeconds()) ;
+
+        if (connect_timer_.getElapsedTime().asSeconds() > 5.f) {
+            state_ = State::MENU;
+        }
+    }
+
+
     else if (state_ == State::WAITING) {
 
         sprite1_.rotate(-90*clock_.restart().asSeconds()) ;
 
-
         sf::TcpSocket::Status status = socket_.receive(in_packet_);
 
-        std::cout << "Waiting socket status " << status << std::endl;
+        //std::cout << "Waiting socket status " << status << std::endl;
 
         if (status == sf::TcpSocket::Status::Done) {
 
             processDataFromServer(in_packet_);
-            socket_.setBlocking(true);
-            state_ = State::RUNNING;
-
+            
         }
 
     }
+
 
     else if (state_ == State::DISPLAY_RESULT) {
 
@@ -308,7 +361,16 @@ void Game::render() {
         RenderMenu();     
     }
     else if (state_ == State::WAITING) {
+
         RenderWaiting();
+    }
+    else if (state_ == State::ESTABLISHING_CONNECTION) {
+
+        RenderConnecting();
+    }
+    else if (state_ == State::CONNECTION_FAILED) {
+        
+        RenderConnectingFailed();
     }
 
     else if (state_ == State::RUNNING || state_ == State::DISPLAY_RESULT) {
@@ -339,6 +401,7 @@ void Game::render() {
 
 
     if (state_ == State::DISPLAY_RESULT) {
+
         RenderResult();
     }
 
