@@ -1,5 +1,7 @@
 #include "network_game.h"
 
+#include "utils.h"
+
 
 void NetworkGame::checkShellsTanksCollisions() {
 
@@ -9,7 +11,9 @@ void NetworkGame::checkShellsTanksCollisions() {
     while (it_shells != tank_shells_0.end()) {
 
 
-        if (tank1.GetBounds().contains( it_shells->GetPosition() ) ) {
+        //if (tank1.GetBounds().contains( it_shells->GetPosition() ) ) {
+
+        if (Collisions::IsRectangleShapePointIntersecting(tank1.getCorpusRef(), it_shells->GetPosition())) {
 
             
             tank0.UpdatePoints(1);
@@ -31,7 +35,9 @@ void NetworkGame::checkShellsTanksCollisions() {
     while (it_shells != tank_shells_1.end()) {
 
 
-        if (tank0.GetBounds().contains( it_shells->GetPosition() ) ) {
+      //  if (tank0.GetBounds().contains( it_shells->GetPosition() ) ) {
+
+        if (Collisions::IsRectangleShapePointIntersecting(tank0.getCorpusRef(), it_shells->GetPosition())) {
 
             
             tank1.UpdatePoints(1);

@@ -44,6 +44,8 @@ class Tank {
         void RestartShootingTimer() ;
         int GetElapsedTimeForShooting() const ;
 
+        const sf::RectangleShape& getCorpusRef() const;
+
     protected:
 
         sf::RectangleShape corpus_;

@@ -24,17 +24,16 @@ class GameServer {
 
     private:
 
-        void handleNewClient(std::shared_ptr<sf::TcpSocket> p_tcp_socket);    
-        void handleGameSession();
+
         void handleMessageFromClient(sf::Packet& packet_, Tank& ref_tank, ShellsList& shells_list);
         void prepareMessageForClients(sf::Packet& packet_, NetworkGame& game); 
 
         sf::TcpListener listener_;
 
-        std::vector<Client> clients_;
+        
 
-        void handleNewClient1(std::shared_ptr<sf::TcpSocket> p_tcp_socket);
-        void handleGameSession1(std::unique_ptr<Client> client0, std::unique_ptr<Client> client1 ); 
+        void handleNewClient(std::shared_ptr<sf::TcpSocket> p_tcp_socket);
+        void handleGameSession(std::unique_ptr<Client> client0, std::unique_ptr<Client> client1 ); 
 
         bool checkWaiting();
 

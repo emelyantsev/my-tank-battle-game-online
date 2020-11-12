@@ -10,10 +10,8 @@
 #include "../common_src/utils.h"
 #include "../common_src/protocol.h"
 
-GameServer::GameServer() {
+GameServer::GameServer() {}
 
-    clients_.reserve(16);
-}
 
 void GameServer::run() {
 
@@ -30,63 +28,27 @@ void GameServer::run() {
 
     while (true) {
 
-
         std::shared_ptr<sf::TcpSocket> p_new_socket(new sf::TcpSocket);
 
         if (listener_.accept(*p_new_socket) != sf::Socket::Done) {
             
             std::cout << "Error accepting new client" << std::endl;  
-
             exit(EXIT_FAILURE);
         }
         else {
-            std::cout << "New client connected" << std::endl;
+
+            std::cout << "New client connected:" << std::endl;
             std::cout << p_new_socket->getRemoteAddress() << ":" << p_new_socket->getRemotePort() << std::endl;
         }
 
-        //handleNewClient(p_new_socket);
-
-        std::thread(&GameServer::handleNewClient1, this, p_new_socket).detach();
-        
+        std::thread(&GameServer::handleNewClient, this, p_new_socket).detach();        
     }
 
 }
+
 
 
 void GameServer::handleNewClient(std::shared_ptr<sf::TcpSocket> p_tcp_socket) {
-
-    clients_.push_back(Client(p_tcp_socket)) ;
-
-    sf::Packet packet;
-    sf::TcpSocket::Status status;
-
-    if (clients_.size() % 2 == 0) {
-
-        
-        packet << 1;
-
-        status = p_tcp_socket->send(packet) ;
-
-        std::cout << "Send id " << 1 << " status = " << status << std::endl;
-
-        std::thread(&GameServer::handleGameSession, this).detach();
-    }
-    else {
-
-        packet << 0;
-
-        status = p_tcp_socket->send(packet) ;
-
-        std::cout << "Send id " << 0 << " status = " << status << std::endl;
-    }
-
-
-
-}
-
-
-
-void GameServer::handleNewClient1(std::shared_ptr<sf::TcpSocket> p_tcp_socket) {
 
 
     mtx_.lock();
@@ -117,7 +79,7 @@ void GameServer::handleNewClient1(std::shared_ptr<sf::TcpSocket> p_tcp_socket) {
         std::cout << "Send id " << 1 << " status = " << status << std::endl;
 
 
-        std::thread( &GameServer::handleGameSession1, this, 
+        std::thread( &GameServer::handleGameSession, this, 
                 std::move(p_waiting_client_),
                 std::move(p_new_client)
                 ).detach();
@@ -128,64 +90,5 @@ void GameServer::handleNewClient1(std::shared_ptr<sf::TcpSocket> p_tcp_socket) {
 
     mtx_.unlock();
 
-    
-
-
-
 }
 
-
-
-bool GameServer::checkWaiting() {
-
-    sf::Packet packet;
-    sf::TcpSocket::Status status;
-
-    packet << int(ServerCommand::CHECK_WAITING);
-
-    status = p_waiting_client_->p_socket_->send(packet) ;
-
-    std::cout << "Waiting socket send status = " << status << std::endl;
-    
-    if (status != sf::TcpSocket::Status::Done) {
-
-        std::cout << "Check waiting send false" << std::endl;
-        return false;
-    }
-
-
-    packet.clear();
-
-    sf::Packet packet2;
-
-    status = p_waiting_client_->p_socket_->receive(packet2);
-
-    std::cout << "Waiting socket receive status = " << status << std::endl;
-
-    if (status != sf::TcpSocket::Status::Done) {
-
-        std::cout << "Check waiting receive false" << std::endl;
-        return false;
-    }
-
-    int command;
-
-    packet2 >> command;
-
-    if (command == int(Command::FINAL)) {
-
-        std::cout << "Check waiting true" << std::endl;
-        
-        return true;
-    } 
-    
-
-    std::cout << "command " << command << " size " << packet2.getDataSize() << std::endl;
-
-    std::cout << "Check waiting command false" << std::endl;
-    return false;
-    
-    
-    
-
-}

@@ -192,3 +192,7 @@ void Tank::RestartShootingTimer() {
 
     shooting_timer_.restart();
 }
+
+const sf::RectangleShape& Tank::getCorpusRef() const {
+    return corpus_;
+};

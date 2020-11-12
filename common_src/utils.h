@@ -16,5 +16,7 @@ namespace Collisions {
 
     bool IsRectangleShapesIntersecting(const sf::RectangleShape& A, const sf::RectangleShape& B);
 
+    bool IsRectangleShapePointIntersecting(const sf::RectangleShape& A, const sf::Vector2f& p);
+
 
 }

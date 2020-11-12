@@ -138,3 +138,26 @@ bool Collisions::IsRectangleShapesIntersecting(const sf::RectangleShape& A, cons
 
     return true;
 }
+
+
+
+bool Collisions::IsRectangleShapePointIntersecting(const sf::RectangleShape& A, const sf::Vector2f& p) {
+
+    sf::RectangleShape AA(A);
+
+    AA.rotate(-A.getRotation());
+
+    float theta = -A.getRotation() * M_PI/180 ;
+       
+    sf::Vector2f rv(p.x-A.getPosition().x, p.y - A.getPosition().y);
+    
+
+    float tx = rv.x * cos(theta) - rv.y * sin(theta) ;
+    float ty = rv.x * sin(theta) + rv.y * cos(theta) ;
+
+
+    sf::Vector2f rp(A.getPosition().x + tx,  A.getPosition().y + ty) ;
+    
+    return AA.getGlobalBounds().contains(rp);
+
+};
