@@ -155,6 +155,112 @@ void Game::processDataFromServer(sf::Packet& packet) {
     packet >> game_time_seconds;
 
 
+
+    obstacles_.clear();
+
+    int obstacles_size;
+    packet >> obstacles_size;
+
+    obstacles_.reserve(obstacles_size);
+
+
+    for (int i = 0; i < obstacles_size ; ++i) {
+
+        int quality;
+        packet >> quality;
+        sf::Vector2f pv, szv;
+
+        packet >> pv.x >> pv.y >> szv.x >> szv.y ;
+
+
+        if (quality == int(Obstacle::Quality::PENETRABLE)) {
+
+            obstacles_.emplace_back(new WaterObstacle(pv, szv)) ;
+        }
+        else {
+            obstacles_.emplace_back(new SolidObstacle(pv, szv)) ;
+        }
+
+    }
+
+
+    int targets_size;
+    packet >> targets_size;
+
+    targets_.clear();
+    targets_.reserve(targets_size) ;
+
+    for (int i = 0; i < targets_size; ++i) {
+
+        int type;
+        sf::Vector2f pv;
+        bool is_alive;
+
+        packet >> type;
+        packet >> pv.x >> pv.y;
+        packet >> is_alive;
+
+        if (type == 0) {
+
+            targets_.emplace_back(new SimpleTarget(pv));
+        }
+        else if (type == 1) {
+
+            targets_.emplace_back(new AdvancedTarget(pv)) ;
+        }
+        else if (type == 2) {
+
+            targets_.emplace_back(new StarTarget(pv) )  ;
+        }
+
+
+        if (!is_alive) {
+            targets_.back()->Blow();
+        }
+
+    }
+
+
+    int sounds_size ;
+    packet >> sounds_size;
+
+
+    //std::cout << sounds_size << std::endl;
+
+    for (int i = 0; i < sounds_size; ++i) {
+
+        int sound_id ;
+        sf::Vector2f sound_pos;
+
+        packet >> sound_id >> sound_pos.x >> sound_pos.y ;
+
+        if (sound_id == 0) {
+
+            sound0_.setPosition(  sf::Vector3f( (sound_pos.x - 320) / 640, (sound_pos.x - 240) / 480, 0 ) )  ;
+            
+            if (id_ == 0) {
+
+                //std::cout << "Play sound" << std::endl;
+                sound0_.play();
+            }
+        }
+        else if (sound_id == 1) {
+
+            sound1_.setPosition(  sf::Vector3f( (sound_pos.x - 320) / 640, (sound_pos.x - 240) / 480, 0 ) )  ;
+            
+            if (id_ == 0) {
+                //std::cout << "Play sound" << std::endl;
+                sound1_.play();
+            }
+
+
+        }
+
+        
+    }
+
+
+
     in_packet_.clear();
 
 
@@ -172,6 +278,8 @@ void Game::processDataFromServer(sf::Packet& packet) {
         socket_.setBlocking(true);
         state_ = State::RUNNING;
     }
+
+
 
     
 }

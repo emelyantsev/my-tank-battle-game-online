@@ -25,7 +25,7 @@ class GameServer {
     private:
 
 
-        void handleMessageFromClient(sf::Packet& packet_, Tank& ref_tank, ShellsList& shells_list);
+        void handleMessageFromClient(sf::Packet& packet_, Tank& ref_tank, ShellsList& shells_list, NetworkGame& game);
         void prepareMessageForClients(sf::Packet& packet_, NetworkGame& game); 
 
         sf::TcpListener listener_;

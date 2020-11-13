@@ -45,6 +45,8 @@ Game::Game() : window_(sf::VideoMode(640, 360), "Tanks Online", sf::Style::Title
                     sf::Color(0, 0, 250),
                     nullptr ) ;
 
+    LoadSounds();
+
 }
 
 
@@ -377,6 +379,17 @@ void Game::render() {
 
 
         window_.draw(terrain_);
+
+        for (auto obstacle : obstacles_) {
+            obstacle->Render(window_);
+        }
+
+
+        for (const auto& target : targets_) {
+            
+            target->Render(window_);
+            
+        }
 
         
         for (const auto& shell : shells_) {

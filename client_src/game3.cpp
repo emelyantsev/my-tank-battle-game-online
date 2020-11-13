@@ -21,7 +21,7 @@ void Game::ToggleFullScreen() {
 
     window_.setView(view_);
     window_.setFramerateLimit(60);
-    window_.setMouseCursorVisible(false);
+    //window_.setMouseCursorVisible(false);
 
     
 
@@ -145,4 +145,18 @@ void Game::RenderConnectingFailed() {
 
     window_.draw(sprite1_);
     window_.draw(connecting_failed_text5_) ;
+}
+
+
+void Game::LoadSounds() {
+    
+
+    buffer0_.loadFromFile("resources\\sounds\\aexp2.wav");
+    buffer1_.loadFromFile("resources\\sounds\\Gun_Silencer.wav");
+
+    //buffer0_.loadFromMemory(&aexp2_wav, aexp2_wav_len);
+    //buffer1_.loadFromMemory(&Gun_Silencer_wav, Gun_Silencer_wav_len);
+
+    sound0_.setBuffer(buffer0_);
+    sound1_.setBuffer(buffer1_);
 }

@@ -2,7 +2,7 @@
 #include "../common_src/utils.h"
 #include "../common_src/protocol.h"
 
-void GameServer::handleMessageFromClient(sf::Packet& packet_, Tank& ref_tank, ShellsList& shells_list) {
+void GameServer::handleMessageFromClient(sf::Packet& packet_, Tank& ref_tank, ShellsList& shells_list, NetworkGame& game) {
 
     int command;
 
@@ -39,6 +39,7 @@ void GameServer::handleMessageFromClient(sf::Packet& packet_, Tank& ref_tank, Sh
             case int(Command::FIRE): {
 
                 shells_list.push_back(ref_tank.Fire());
+                game.sounds_.push_back( NetworkGame::Sound(0, ref_tank.GetPosition() )) ;
                 break;
             }
 
@@ -85,11 +86,68 @@ void GameServer::prepareMessageForClients(sf::Packet& packet, NetworkGame& game)
         packet << shell.GetPosition().x << shell.GetPosition().y ;
     }
 
-
-
     packet << game.game_timer_.getElapsedTime().asSeconds();
 
 
+
+    packet << (int) game.obstacles_.size() ;
+
+    for (auto& p_obstacle : game.obstacles_) {
+        
+        packet << (int) p_obstacle->GetQuality() << p_obstacle->GetPosition().x << p_obstacle->GetPosition().y <<
+            p_obstacle->GetSize().x << p_obstacle->GetSize().y ;
+        ;
+    }
+
+
+    packet << (int) game.targets_.size() ;
+
+    for (auto& p_target : game.targets_) {
+
+
+        if (dynamic_cast<const SimpleTarget*>(p_target.get()) != nullptr ) {
+
+            packet << 0;
+        }
+
+        else if (dynamic_cast<const AdvancedTarget*>(p_target.get()) != nullptr ) {
+
+            packet << 1;
+        }
+
+        else if (dynamic_cast<const StarTarget*>(p_target.get()) != nullptr ) {
+
+            packet << 2;
+        }
+
+
+        packet << p_target->GetPosition().x << p_target->GetPosition().y;
+
+        if (p_target->GetState() == Target::State::ALIVE) {
+            
+            packet << true;
+        }
+        else {
+            packet << false;
+        }
+
+
+    }
+
+
+    packet << (int) game.sounds_.size() ;
+
+
+    // if (game.sounds_.size() > 0) {
+    //     std::cout << "Sounds size" << game.sounds_.size() << std::endl;
+    // }
+
+    for (const auto& sound : game.sounds_) {
+
+        packet << sound.id_ << sound.pos_.x << sound.pos_.y;
+    }
+
+    game.sounds_.clear();
 
 }; 
 

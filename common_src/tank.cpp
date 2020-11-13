@@ -4,7 +4,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-
+#include <algorithm>
 #include <iostream>
 
 
@@ -88,6 +88,15 @@ void Tank::Update(float time_diff) {
         Stop();
         return;
     }
+
+
+    if (std::any_of(p_game_->obstacles_.begin(), p_game_->obstacles_.end(), 
+
+    [&](std::shared_ptr<Obstacle> p_item){ return p_item->GetBounds().contains(new_position)  ;  }  )  ) {
+        Stop();
+        return;
+    }
+
 
 
     sf::RectangleShape new_corpus(corpus_);

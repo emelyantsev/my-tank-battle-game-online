@@ -16,12 +16,17 @@ void NetworkGame::InitNewGame() {
     tank0 = Tank(  sf::Vector2f{ static_cast<float>(20. + std::rand() % 150),  static_cast<float>(40. + std::rand() % 300 ) }, 
         sf::Color::Black, sf::Color::Black, sf::Color::Black, this
      );    
+
     tank1 = Tank(  sf::Vector2f{ static_cast<float>(320. + std::rand() % 150),  static_cast<float>(40. + std::rand() % 300 ) },
         sf::Color::Black, sf::Color::Black, sf::Color::Black, this ) ;
 
     tank1.Rotate(180);
 
     game_timer_.restart();
+
+    obstacles_.clear();
+
+    spawnItems();
 
 }
 
@@ -86,7 +91,17 @@ void NetworkGame::Update() {
     }
 
 
+    for (auto& target : targets_) {
+        
+        target->Update(time_diff);
+         
+    }
+
+
+
     checkShellsTanksCollisions();
+    checkShellsObstaclesCollisions();
+    checkShellsTargetsCollisions();
 
 }
 

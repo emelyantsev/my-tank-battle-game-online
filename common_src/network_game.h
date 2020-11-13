@@ -18,6 +18,8 @@ struct NetworkGame {
     void Update();
 
     void checkShellsTanksCollisions();
+    void checkShellsObstaclesCollisions() ;
+    void checkShellsTargetsCollisions() ;
 
     sf::FloatRect getField();
 
@@ -28,14 +30,29 @@ struct NetworkGame {
     std::list<Shell> tank_shells_0;
     std::list<Shell> tank_shells_1;
 
+
     sf::Clock clock_;
 
     sf::Clock game_timer_;
-    float game_duration_ = 60.f;
+    float game_duration_ = 120.f;
 
     std::vector<std::shared_ptr<Obstacle>> obstacles_;
     std::list<std::shared_ptr<Target>> targets_ ;
 
     bool stopped = false;
 
+    void spawnItems() ;
+
+
+    struct Sound {
+
+        Sound(int id, sf::Vector2f pos);
+
+        int id_;
+        sf::Vector2f pos_;
+    };
+
+
+    std::vector<Sound> sounds_;
+    
 };

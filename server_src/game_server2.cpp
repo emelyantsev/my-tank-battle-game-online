@@ -53,7 +53,7 @@ void GameServer::handleGameSession(std::unique_ptr<Client> client0_, std::unique
 
             if (status0 == sf::TcpSocket::Status::Done) {
 
-                handleMessageFromClient(in_message0, game.tank0, game.tank_shells_0);
+                handleMessageFromClient(in_message0, game.tank0, game.tank_shells_0, game);
             }
             else {
                 std::cout << "Client 0 receive status " << status0 << std::endl;
@@ -66,7 +66,7 @@ void GameServer::handleGameSession(std::unique_ptr<Client> client0_, std::unique
             status1 = client1.p_socket_->receive(in_message1);
             
             if (status1 == sf::TcpSocket::Status::Done) {
-                handleMessageFromClient(in_message1, game.tank1, game.tank_shells_1);
+                handleMessageFromClient(in_message1, game.tank1, game.tank_shells_1, game);
             }
             else {
                 std::cout << "Client 1 receive status " << status1 << std::endl;

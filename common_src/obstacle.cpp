@@ -10,6 +10,7 @@ WaterObstacle::WaterObstacle(sf::Vector2f position, sf::Vector2f size, sf::Color
 }
 
 sf::Vector2f WaterObstacle::GetPosition() const { return body_.getPosition() ;  } ;
+sf::Vector2f WaterObstacle::GetSize() const { return body_.getSize(); };
 sf::FloatRect WaterObstacle::GetBounds() const { return body_.getGlobalBounds() ; };
 Obstacle::Quality WaterObstacle::GetQuality() const { return quality_ ; };
 
@@ -26,6 +27,7 @@ SolidObstacle::SolidObstacle(sf::Vector2f position, sf::Vector2f size, sf::Color
 }
 
 sf::Vector2f SolidObstacle::GetPosition() const { return body_.getPosition() ;  } ;
+sf::Vector2f SolidObstacle::GetSize() const { return body_.getSize(); };
 sf::FloatRect SolidObstacle::GetBounds() const { return body_.getGlobalBounds() ; };
 Obstacle::Quality SolidObstacle::GetQuality() const { return quality_ ; };
 

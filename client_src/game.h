@@ -3,10 +3,14 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
+#include <SFML/Audio.hpp>
 
 #include "../common_src/tank.h"
 #include "../common_src/protocol.h"
 #include "../common_src/shell.h"
+#include "../common_src/obstacle.h"
+#include "../common_src/target.h"
+
 
 #include <memory>
 #include <vector>
@@ -66,6 +70,9 @@ class Game {
         std::vector<Shell> shells_;
         std::vector<Shell> enemy_shells_;
 
+
+        std::vector<std::shared_ptr<Obstacle>> obstacles_;
+        std::vector<std::shared_ptr<Target>> targets_;
 
 
         // ---- Network ---- //
@@ -165,5 +172,16 @@ class Game {
         void PrepareConnecting();
         void RenderConnecting();
         void RenderConnectingFailed();
+
+
+        // --------- Sounds ------------//
+
+
+        sf::SoundBuffer buffer0_;
+        sf::SoundBuffer buffer1_;
+        sf::Sound sound0_;
+        sf::Sound sound1_;
+
+        void LoadSounds();
 
 };
