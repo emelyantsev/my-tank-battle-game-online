@@ -61,7 +61,7 @@ void GameServer::handleMessageFromClient(sf::Packet& packet_, Tank& ref_tank, Sh
 
 
 
-void GameServer::prepareMessageForClients(sf::Packet& packet, NetworkGame& game) {
+void GameServer::prepareMessageForClients(sf::Packet& packet, NetworkGame& game, bool client0_ok, bool client1_ok) {
 
     if (!game.stopped) {
         packet << int(ServerCommand::PLAY) ;
@@ -137,17 +137,15 @@ void GameServer::prepareMessageForClients(sf::Packet& packet, NetworkGame& game)
 
     packet << (int) game.sounds_.size() ;
 
-
-    // if (game.sounds_.size() > 0) {
-    //     std::cout << "Sounds size" << game.sounds_.size() << std::endl;
-    // }
-
     for (const auto& sound : game.sounds_) {
 
         packet << sound.id_ << sound.pos_.x << sound.pos_.y;
     }
 
     game.sounds_.clear();
+
+
+    packet << client0_ok << client1_ok;
 
 }; 
 
@@ -181,7 +179,7 @@ bool GameServer::checkWaiting() {
 
     status = p_waiting_client_->p_socket_->receive(packet2);
 
-    std::cout << "Waiting socket receive status = " << status << std::endl;
+    //std::cout << "Waiting socket receive status = " << status << std::endl;
 
     if (status != sf::TcpSocket::Status::Done) {
 

@@ -12,7 +12,8 @@
 void Game::ConnectToServer() {
 
 
-    sf::TcpSocket::Status  status = socket_.connect("127.0.0.1", 45000);
+    //sf::TcpSocket::Status  status = socket_.connect("127.0.0.1", 45000);
+    sf::TcpSocket::Status  status = socket_.connect("192.168.10.101", 45000);
 
     std::cout << "Connect status :" << status << std::endl;
 
@@ -225,8 +226,6 @@ void Game::processDataFromServer(sf::Packet& packet) {
     packet >> sounds_size;
 
 
-    //std::cout << sounds_size << std::endl;
-
     for (int i = 0; i < sounds_size; ++i) {
 
         int sound_id ;
@@ -238,28 +237,24 @@ void Game::processDataFromServer(sf::Packet& packet) {
 
             sound0_.setPosition(  sf::Vector3f( (sound_pos.x - 320) / 640, (sound_pos.x - 240) / 480, 0 ) )  ;
             
-            if (id_ == 0) {
-
-                //std::cout << "Play sound" << std::endl;
-                sound0_.play();
-            }
+            sound0_.play();
         }
         else if (sound_id == 1) {
 
             sound1_.setPosition(  sf::Vector3f( (sound_pos.x - 320) / 640, (sound_pos.x - 240) / 480, 0 ) )  ;
             
-            if (id_ == 0) {
-                //std::cout << "Play sound" << std::endl;
-                sound1_.play();
-            }
-
-
+            sound1_.play();
         }
 
         
     }
 
 
+    bool connect_status0, connect_status1;
+
+    in_packet_ >> connect_status0 >> connect_status1;
+
+    enemy_connected_ = id_ == 0 ? connect_status1 : connect_status0;
 
     in_packet_.clear();
 

@@ -1,0 +1,15 @@
+
+/---- Record gif ------ /
+
+ffmpeg -f gdigrab -framerate 30 -i title="Tanks Online" -b:v 3M  record.flv
+ffmpeg -i record.flv -vf "fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 record.gif
+
+
+// ------ Docker commands
+
+docker build -t tanks-server-img .
+
+docker run -p 45000:45000 --name tanks-server-container tanks-server-img
+
+docker stop tanks-server-containter
+docker start tanks-server-containter -a

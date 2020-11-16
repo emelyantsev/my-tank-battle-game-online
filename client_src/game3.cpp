@@ -21,7 +21,7 @@ void Game::ToggleFullScreen() {
 
     window_.setView(view_);
     window_.setFramerateLimit(60);
-    //window_.setMouseCursorVisible(false);
+    window_.setMouseCursorVisible(false);
 
     
 

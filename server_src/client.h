@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <SFML\Network.hpp>
+#include <SFML/Network.hpp>
 
 struct Client {
 

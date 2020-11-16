@@ -125,6 +125,9 @@ class Game {
 
         sf::Text time_str_;
 
+        bool enemy_connected_;
+        sf::Text enemy_connect_status;
+
         void PrepareStatus();
         void UpdateStatus() ;
 

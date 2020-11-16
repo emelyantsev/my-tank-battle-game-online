@@ -26,7 +26,7 @@ class GameServer {
 
 
         void handleMessageFromClient(sf::Packet& packet_, Tank& ref_tank, ShellsList& shells_list, NetworkGame& game);
-        void prepareMessageForClients(sf::Packet& packet_, NetworkGame& game); 
+        void prepareMessageForClients(sf::Packet& packet_, NetworkGame& game, bool client0_ok = true, bool client1_ok = true); 
 
         sf::TcpListener listener_;
 

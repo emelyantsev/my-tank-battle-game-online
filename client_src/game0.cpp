@@ -9,7 +9,7 @@ Game::Game() : window_(sf::VideoMode(640, 360), "Tanks Online", sf::Style::Title
 
 
     window_.setFramerateLimit(60);
-    //window_.setMouseCursorVisible(false);
+    window_.setMouseCursorVisible(false);
 
     view_.setCenter({320, 180});
     view_.setSize({640, 360});
@@ -322,6 +322,13 @@ void Game::update() {
             processDataFromServer(in_packet_);
             
         }
+        else if (status == sf::TcpSocket::Status::Disconnected) {
+
+            connect_timer_.restart();
+            state_ = State::CONNECTION_FAILED;
+            socket_.disconnect();
+            socket_.setBlocking(true);
+        }
 
     }
 
@@ -339,11 +346,35 @@ void Game::update() {
 
         out_packet_ << int(Command::FINAL) ;
 
-        socket_.send(out_packet_);
+
+        sf::TcpSocket::Status status;
+
+        status = socket_.send(out_packet_);
+
+        if (status == sf::TcpSocket::Status::Disconnected) {
+
+            connect_timer_.restart();
+            state_ = State::CONNECTION_FAILED;
+            socket_.disconnect();
+            socket_.setBlocking(true);
+            return;
+        }
+
+
         out_packet_.clear();
 
 
-        socket_.receive(in_packet_);
+        status = socket_.receive(in_packet_);
+
+        if (status == sf::TcpSocket::Status::Disconnected) {
+
+            connect_timer_.restart();
+            state_ = State::CONNECTION_FAILED;
+            socket_.disconnect();
+            socket_.setBlocking(true);
+            return;
+        }
+
         processDataFromServer(in_packet_);
 
         UpdateStatus();
@@ -409,6 +440,12 @@ void Game::render() {
         window_.draw(status_text_0);
         window_.draw(status_text_1);
         window_.draw(time_str_);
+
+        if (!enemy_connected_) {
+
+            //std::cout << "draw disconnected" << std::endl;
+            window_.draw(enemy_connect_status);
+        }
 
     }
 

@@ -18,6 +18,9 @@ void GameServer::handleGameSession(std::unique_ptr<Client> client0_, std::unique
     sf::TcpSocket::Status status0;
     sf::TcpSocket::Status status1;
 
+    bool client0_ok = true;
+    bool client1_ok = true;
+
     
     NetworkGame game;
 
@@ -29,10 +32,10 @@ void GameServer::handleGameSession(std::unique_ptr<Client> client0_, std::unique
 
 
     status0 = client0.p_socket_->send(out_message);
-    std::cout << "Client 0 send status " << status0 << std::endl;
+    //std::cout << "Client 0 send status " << status0 << std::endl;
 
     status1 = client1.p_socket_->send(out_message);
-    std::cout << "Client 1 send status " << status1 << std::endl;
+    //std::cout << "Client 1 send status " << status1 << std::endl;
 
 
 
@@ -57,6 +60,7 @@ void GameServer::handleGameSession(std::unique_ptr<Client> client0_, std::unique
             }
             else {
                 std::cout << "Client 0 receive status " << status0 << std::endl;
+                client0_ok = false;
             }
         }
 
@@ -70,6 +74,7 @@ void GameServer::handleGameSession(std::unique_ptr<Client> client0_, std::unique
             }
             else {
                 std::cout << "Client 1 receive status " << status1 << std::endl;
+                client1_ok = false;
             }
         }
 
@@ -78,7 +83,10 @@ void GameServer::handleGameSession(std::unique_ptr<Client> client0_, std::unique
 
         out_message.clear();
 
-        prepareMessageForClients(out_message, game);
+
+
+
+        prepareMessageForClients(out_message, game, client0_ok, client1_ok);
 
 
         if (status0 == sf::TcpSocket::Status::Done) {
@@ -88,6 +96,7 @@ void GameServer::handleGameSession(std::unique_ptr<Client> client0_, std::unique
             if (status0 != sf::TcpSocket::Status::Done) {
 
                 std::cout << "Client 0 send status " << status0 << std::endl;
+                client0_ok = false;
             }
         }
 
@@ -99,6 +108,7 @@ void GameServer::handleGameSession(std::unique_ptr<Client> client0_, std::unique
             if (status1 != sf::TcpSocket::Status::Done) {
 
                 std::cout << "Client 1 send status " << status1 << std::endl;
+                client1_ok = false;
             }
         }
 

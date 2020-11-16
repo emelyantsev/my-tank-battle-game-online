@@ -65,6 +65,12 @@ void Game::PrepareStatus() {
     time_str_.setFont(font_);
     time_str_.setPosition(300, 0);
     time_str_.setColor(sf::Color(120, 120, 120));
+
+    enemy_connect_status.setFont(font_);
+    enemy_connect_status.setPosition(480, 25);
+    enemy_connect_status.setCharacterSize(15);
+    enemy_connect_status.setColor(sf::Color::Red);
+    enemy_connect_status.setString("Disconnected");
 }
 
 
